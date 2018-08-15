@@ -1,0 +1,24 @@
+{
+   "name": "wedding",
+   "version": "0.0.1",
+   "description": "Awesome project developed with TypeORM.",
+   "devDependencies": {
+      "@types/node": "8.0.29",
+      "nodemon": "1.18.3",
+      "ts-node": "3.3.0",
+      "typescript": "3.0"
+   },
+   "dependencies": {
+      "graphql-yoga": "1.16.1",
+      "pg": "7.4.3",
+      "reflect-metadata": "0.1.12",
+      "type-graphql": "0.13.1",
+      "typedi": "0.8.0",
+      "typeorm": "0.2.3",
+      "typeorm-typedi-extensions": "0.2.1"
+   },
+   "scripts": {
+      "start": "ts-node src/index.ts --type-check",
+      "watch": "nodemon --exec ts-node src/index.ts --type-check"
+   }
+}
