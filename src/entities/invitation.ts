@@ -19,7 +19,7 @@ export class Invitation {
 
     @Field({ nullable: true })
     @Column({ nullable: true })
-    public notes?: string;
+    public note?: string;
 
     @Field(type => [Invitee])
     @OneToMany(type => Invitee, invitee => invitee.invitation, { cascade: false })

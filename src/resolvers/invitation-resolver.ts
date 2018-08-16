@@ -34,7 +34,9 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
-    @Mutation(returns => Invitation)
+    @Mutation(returns => Invitation, {
+        description: 'Returns the removed invitation. This removes the invitation and ALL the invitees in the invitation. Throws if no invitation matching id is found.'
+    })
     public async removeInvitation(@Arg('invitationId', type => String) invitationId: string) {
         const invitation = await this.invitationRepository.findOne(invitationId, {
             relations: ['invitees']
@@ -44,8 +46,29 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
             throw new Error(`No invitation found matching id: ${invitationId}`);
         }
 
-        await this.inviteeRepository.remove(invitation.invitees); // TODO: Cascade delete instead?
+        if (invitation.invitees) {
+            await this.inviteeRepository.remove(invitation.invitees); // TODO: Cascade delete instead?
+        }
+
         return await this.invitationRepository.remove(invitation);
+    }
+
+    @Mutation(returns => Invitation)
+    public async addNote(
+        @Arg('invitationId') invitationId: string,
+        @Arg('note') note: string
+    ) {
+        const invitation = await this.invitationRepository.findOne(invitationId, {
+            relations: ['invitees']
+        });
+
+        if (!invitation) {
+            throw new Error(`No invitation matching id: ${invitationId}`);
+        }
+
+        invitation.note = note;
+
+        return await this.invitationRepository.save(invitation);
     }
 
     // Add note
