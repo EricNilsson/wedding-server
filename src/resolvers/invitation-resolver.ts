@@ -71,8 +71,6 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
-    // Add note
-
     @FieldResolver()
     public invitees(@Root() invitation: Invitation) {
         return this.inviteeRepository.find({
