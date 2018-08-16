@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
+
+import { v4 } from 'uuid';
 
 import { Invitee } from './invitee';
 
@@ -7,12 +9,12 @@ import { Invitee } from './invitee';
 @Entity()
 export class Invitation {
 
-    @Field(type => ID)
-    @PrimaryGeneratedColumn()
-    public readonly id: number;
+    @Field(type => String)
+    @PrimaryColumn('uuid')
+    public id: string;
 
-    @Field()
-    @Column()
+    @Field({ nullable: true })
+    @Column({ nullable: true })
     public code: string;
 
     @Field({ nullable: true })
@@ -20,12 +22,15 @@ export class Invitation {
     public notes?: string;
 
     @Field(type => [Invitee])
-    @ManyToOne(type => Invitee, invitee => invitee.invitation)
+    @OneToMany(type => Invitee, invitee => invitee.invitation, { cascade: false })
     public invitees: Invitee[];
 
-    // Address?
+    @BeforeInsert()
+    public init() {
+        this.id = v4();
+        this.code = 'K9Q1'; // TODO: Implement random generator for codes
+    }
 
-    // Before insert
-    //     Create new random code
+    // Address?
 
 }

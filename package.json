@@ -4,6 +4,7 @@
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
       "@types/node": "8.0.29",
+      "@types/uuid": "^3.4.3",
       "nodemon": "1.18.3",
       "ts-node": "3.3.0",
       "typescript": "3.0"
@@ -15,7 +16,8 @@
       "type-graphql": "0.13.1",
       "typedi": "0.8.0",
       "typeorm": "0.2.3",
-      "typeorm-typedi-extensions": "0.2.1"
+      "typeorm-typedi-extensions": "0.2.1",
+      "uuid": "^3.3.2"
    },
    "scripts": {
       "start": "ts-node src/index.ts --type-check",

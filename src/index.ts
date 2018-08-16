@@ -8,8 +8,9 @@ import { Container } from 'typedi';
 
 import { Invitee } from './entities/invitee';
 import { Invitation } from './entities/invitation';
-import { InvitationResolver } from './resolvers/invitation-resolver';
 
+import { InvitationResolver } from './resolvers/invitation-resolver';
+import { InviteeResolver } from './resolvers/invitee-resolver';
 
 TypeGraphQL.useContainer(Container);
 TypeORM.useContainer(Container);
@@ -26,7 +27,10 @@ async function bootstrap() {
             password: null, // Move to env
             port: 5432, // Move to env
             host: 'localhost', // Move to env
-            entities: [Invitee, Invitation],
+            entities: [
+                Invitee,
+                Invitation
+            ],
             synchronize: true,
             logger: 'advanced-console',
             logging: 'all',
@@ -37,7 +41,10 @@ async function bootstrap() {
 
     try {
         schema = await TypeGraphQL.buildSchema({
-          resolvers: [InvitationResolver],
+          resolvers: [
+              InvitationResolver,
+              InviteeResolver
+          ],
         });
     } catch (error) { console.log('error', error) }
 
