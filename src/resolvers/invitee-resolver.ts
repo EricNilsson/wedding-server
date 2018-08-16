@@ -54,8 +54,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
     }
 
     @Mutation(returns => Invitee, {
-        description: 'This returnes the removed invitee, null if the invitee is not found in the invitation.',
-        nullable: true
+        description: 'This returnes the removed invitee. Throws error if invitee is not found.'
     })
     public async removeInvitee(
         @Arg('inviteeId', type => String) inviteeId: string
@@ -64,14 +63,13 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
 
         if (!invitee) {
             throw new Error(`No invitation found matching id: ${inviteeId}`);
-        } else {
-            await this.inviteeRepository.remove(invitee);
         }
+
+        return await this.inviteeRepository.remove(invitee);
     }
 
     @FieldResolver(returns => Invitation)
     public invitation(@Root() invitee: Invitee) {
-        console.log('invitee', invitee);
         return this.invitationRepository.findOne(invitee.invitationId, {
             cache: 1000,
             relations: ['invitees']
