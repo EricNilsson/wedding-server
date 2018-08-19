@@ -15,7 +15,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     ) {}
 
     @Query(returns => Invitation)
-    public invitation(@Arg('invitationId') invitationId: string) {
+    public invitation(@Arg('invitationId') invitationId?: string) {
         return this.invitationRepository.findOne(invitationId, {
             relations: ['invitees']
         });
