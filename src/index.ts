@@ -14,6 +14,7 @@ import { Invitation } from './entities/invitation';
 
 import { InviteeResolver } from './resolvers/invitee-resolver';
 import { InvitationResolver } from './resolvers/invitation-resolver';
+import { AuthResolver } from './resolvers/auth-resolver';
 
 TypeGraphQL.useContainer(Container);
 TypeORM.useContainer(Container);
@@ -36,8 +37,8 @@ async function bootstrap() {
             ],
             synchronize: true,
             logger: 'advanced-console',
-            logging: 'all',
-            dropSchema: true,
+            logging: true,
+            dropSchema: false,
             cache: true,
         });
     } catch(error) { console.log('error', error) }
@@ -46,7 +47,8 @@ async function bootstrap() {
         schema = await TypeGraphQL.buildSchema({
             resolvers: [
                 InvitationResolver,
-                InviteeResolver
+                InviteeResolver,
+                AuthResolver
             ],
             authChecker
         });
@@ -56,9 +58,8 @@ async function bootstrap() {
     const server = new GraphQLServer({
         schema,
         context: ({ request }) => {
-            console.log('request', request);
             const context: Context = {
-                invitation: (request as any).invitation,
+                tokenData: (request as any).tokenData
             };
             return context;
         }
@@ -71,20 +72,21 @@ async function bootstrap() {
         playground: '/playground',
     };
 
+    server.express.use(
+        serverOptions.endpoint,
+        jwt({
+            secret: process.env.JWT_SECRET || 'TODO',
+            credentialsRequired: false,
+            userProperty: 'tokenData',
+        })
+    );
+
     // Start the server
     server.start(serverOptions, ({ port, playground }) => {
         console.log(
             `Server is running, GraphQL Playground available at http://localhost:${port}${playground}`,
         );
     });
-    server.express.use(
-        serverOptions.endpoint,
-        jwt({
-            secret: process.env.JWT_SECRET || 'TODO: FIX SECRET',
-            credentialsRequired: false,
-            userProperty: 'invitation'
-        })
-    );
 }
 
 try {
