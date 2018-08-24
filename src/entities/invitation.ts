@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
-import { generate } from './../common/generate-code';
+import * as Code from './../common/generate-code';
 
 import { v4 } from 'uuid';
 
@@ -30,7 +30,7 @@ export class Invitation {
     @BeforeInsert()
     public init() {
         this.id = v4();
-        this.code = generate(); // TODO: Implement random generator for codes
+        this.code = Code.generate(); // TODO: Implement random generator for codes
     }
 
     // Address?

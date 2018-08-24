@@ -66,10 +66,27 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         const invitee = await this.inviteeRepository.findOne(inviteeId);
 
         if (!invitee) {
-            throw new Error(`No invitation found matching id: ${inviteeId}`);
+            throw new Error(`No invitation found matching ID: ${inviteeId}`);
         }
 
         return await this.inviteeRepository.remove(invitee);
+    }
+
+    @Authorized()
+    @Mutation(returns => Invitee)
+    public async setInviteStatus(
+        @Arg('inviteeId') inviteeId: string,
+        @Arg('inviteStatus', { nullable: true }) inviteStatus?: boolean
+    ) {
+        const invitee = await this.inviteeRepository.findOne(inviteeId, { relations: ['invitation'] });
+
+        if (!invitee) {
+            throw new Error(`No invitee found with ID: ${ inviteeId }`)
+        }
+
+        invitee.inviteStatus = inviteStatus;
+
+        return await this.inviteeRepository.save(invitee);
     }
 
     @Authorized()
