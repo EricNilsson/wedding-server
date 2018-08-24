@@ -1,4 +1,4 @@
-import { Resolver, ResolverInterface, Query, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
+import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 
@@ -14,13 +14,15 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         @InjectRepository(Invitee) private readonly inviteeRepository: Repository<Invitee>
     ) {}
 
+    @Authorized()
     @Query(returns => Invitation)
-    public invitation(@Arg('invitationId') invitationId: string) {
+    public invitation(@Arg('invitationId') invitationId?: string) {
         return this.invitationRepository.findOne(invitationId, {
             relations: ['invitees']
         });
     }
 
+    @Authorized()
     @Query(returns => [Invitation])
     public invitations(): Promise<Invitation[]> {
         return this.invitationRepository.find({
@@ -28,12 +30,15 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         });
     }
 
+    @Authorized()
     @Mutation(returns => Invitation)
-    public async createInvitation() {
+    public async createInvitation(@Ctx() context) {
+        console.log('context', context);
         const invitation = await this.invitationRepository.create();
         return await this.invitationRepository.save(invitation);
     }
 
+    @Authorized()
     @Mutation(returns => Invitation, {
         description: 'Returns the removed invitation. This removes the invitation and ALL the invitees in the invitation. Throws if no invitation matching id is found.'
     })
@@ -53,6 +58,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.remove(invitation);
     }
 
+    @Authorized()
     @Mutation(returns => Invitation)
     public async addNote(
         @Arg('invitationId') invitationId: string,
@@ -71,6 +77,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
+    @Authorized()
     @FieldResolver()
     public invitees(@Root() invitation: Invitation) {
         return this.inviteeRepository.find({

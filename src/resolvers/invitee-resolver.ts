@@ -1,4 +1,4 @@
-import { Resolver, ResolverInterface, Query, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
+import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 
@@ -14,6 +14,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         @InjectRepository(Invitee) private readonly inviteeRepository: Repository<Invitee>
     ) {}
 
+    @Authorized()
     @Query(returns => Invitation)
     public invitee(@Arg('inviteeId') inviteeId: string) {
         return this.inviteeRepository.findOne(inviteeId, {
@@ -21,6 +22,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
+    @Authorized()
     @Query(returns => [Invitee])
     public invitees(): Promise<Invitee[]> {
         return this.inviteeRepository.find({
@@ -28,6 +30,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
+    @Authorized()
     @Mutation(returns => Invitee)
     public async addInvitee(@Arg('invitee') {invitationId, ...invitee}: InviteeInput) {
         const invitation = await this.invitationRepository.findOne(invitationId, {relations: ['invitees']});
@@ -53,6 +56,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         return newInvitee;
     }
 
+    @Authorized()
     @Mutation(returns => Invitee, {
         description: 'This returnes the removed invitee. Throws error if invitee is not found.'
     })
@@ -68,6 +72,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         return await this.inviteeRepository.remove(invitee);
     }
 
+    @Authorized()
     @FieldResolver(returns => Invitation)
     public invitation(@Root() invitee: Invitee) {
         return this.invitationRepository.findOne(invitee.invitationId, {
