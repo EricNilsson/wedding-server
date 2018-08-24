@@ -33,7 +33,6 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     @Authorized()
     @Mutation(returns => Invitation)
     public async createInvitation(@Ctx() context) {
-        console.log('context', context);
         const invitation = await this.invitationRepository.create();
         return await this.invitationRepository.save(invitation);
     }
