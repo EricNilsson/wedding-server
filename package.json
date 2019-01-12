@@ -10,6 +10,7 @@
       "@types/uuid": "^3.4.3",
       "nodemon": "1.18.3",
       "ts-node": "3.3.0",
+      "ts-node-dev": "^1.0.0-pre.32",
       "typescript": "3.0"
    },
    "dependencies": {
@@ -27,7 +28,7 @@
       "uuid": "^3.3.2"
    },
    "scripts": {
-      "start": "ts-node src/index.ts --type-check",
-      "watch": "nodemon --exec ts-node src/index.ts --type-check"
+      "start": "ts-node src/index.ts",
+      "watch": "ts-node-dev --respawn src/index.ts"
    }
 }
