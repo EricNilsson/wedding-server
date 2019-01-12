@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './env.ts';
 
 import * as TypeORM from 'typeorm';
 import * as TypeGraphQL from 'type-graphql';
@@ -26,11 +27,11 @@ async function bootstrap() {
         // Move config to file?
         await TypeORM.createConnection({
             type: 'postgres',
-            database: 'wedding', // Move to env
-            username: 'eric', // Move to env
-            password: null, // Move to env
-            port: 5432, // Move to env
-            host: 'localhost', // Move to env
+            database: process.env.DB_NAME,
+            username: process.env.DB_USER,
+            password: process.env.DB_PASS,
+            port: parseInt(process.env.DB_PORT),
+            host: process.env.DB_HOST,
             entities: [
                 Invitee,
                 Invitation
@@ -75,7 +76,7 @@ async function bootstrap() {
     server.express.use(
         serverOptions.endpoint,
         jwt({
-            secret: process.env.JWT_SECRET || 'TODO',
+            secret: process.env.JWT_SECRET,
             credentialsRequired: false,
             userProperty: 'tokenData',
         })

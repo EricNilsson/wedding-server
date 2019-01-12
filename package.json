@@ -3,6 +3,7 @@
    "version": "0.0.1",
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
+      "@types/dotenv": "^6.1.0",
       "@types/express-jwt": "0.0.40",
       "@types/jsonwebtoken": "^7.2.8",
       "@types/node": "8.0.29",
@@ -12,6 +13,8 @@
       "typescript": "3.0"
    },
    "dependencies": {
+      "dotenv": "^6.2.0",
+      "dotenv-expand": "^4.2.0",
       "express-jwt": "^5.3.1",
       "graphql-yoga": "1.16.1",
       "jsonwebtoken": "^8.3.0",
