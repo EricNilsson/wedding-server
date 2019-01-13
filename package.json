@@ -29,6 +29,7 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
-      "watch": "ts-node-dev --respawn src/index.ts"
+      "watch": "ts-node-dev --respawn src/index.ts",
+      "deploy": "git pull && docker-compose up -d --build"
    }
 }
