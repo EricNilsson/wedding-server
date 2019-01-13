@@ -12,6 +12,11 @@ export const authChecker: AuthChecker<Context> = ({ root, args, context: { token
     // if (roles.length) {
     //     return roles.some(role => !!Roles[role]) && !!invitationId;
     // }
+
+
+    // Lägg på ROLE i tokendatan och kolla den mor roles.
+    // Använd detta för ADMIN stuffs
+
     console.log('authChecker tokenData', tokenData);
-    return !!tokenData && !!tokenData.invitationId;
+    return !!tokenData && !!tokenData.invitationId; // Logged in if there is a token present and it has a invitationId
 }
