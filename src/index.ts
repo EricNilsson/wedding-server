@@ -5,7 +5,8 @@ import * as TypeORM from 'typeorm';
 import * as TypeGraphQL from 'type-graphql';
 import * as jwt from 'express-jwt';
 
-import { GraphQLServer, Options } from 'graphql-yoga';
+import { ApolloServer } from 'apollo-server-express';
+import * as Express from 'express';
 import { Container } from 'typedi';
 import { Context } from './common/context.interface';
 import { authChecker } from './auth-checker';
@@ -55,26 +56,20 @@ async function bootstrap() {
         });
     } catch (error) { console.log('error', error) }
 
-    // Create GraphQL server
-    const server = new GraphQLServer({
+    const apolloServer = new ApolloServer({
         schema,
-        context: ({ request }) => {
-            const context: Context = {
-                tokenData: (request as any).tokenData
-            };
-            return context;
+        // formatError: formatArgumentValidationError,
+        context: ({ req, res }: any): Context => {
+            return {
+                tokenData: req.tokenData
+            }
         }
     });
 
-    // Configure server options
-    const serverOptions: Options = {
-        port: 4000,
-        endpoint: '/graphql',
-        playground: '/playground',
-    };
+    const app = Express();
 
-    server.express.use(
-        serverOptions.endpoint,
+    app.use(
+        '/graphql',
         jwt({
             secret: process.env.JWT_SECRET,
             credentialsRequired: false,
@@ -82,11 +77,10 @@ async function bootstrap() {
         })
     );
 
-    // Start the server
-    server.start(serverOptions, ({ port, playground }) => {
-        console.log(
-            `Server is running, GraphQL Playground available at http://localhost:${port}${playground}`,
-        );
+    apolloServer.applyMiddleware({ app });
+
+    app.listen(4000, () => {
+        console.log("server started on http://localhost:4000/graphql");
     });
 }
 
