@@ -6,6 +6,7 @@ import * as TypeGraphQL from 'type-graphql';
 import * as jwt from 'express-jwt';
 
 import { ApolloServer } from 'apollo-server-express';
+import { formatError } from 'apollo-errors';
 import * as Express from 'express';
 import { Container } from 'typedi';
 import { Context } from './common/context.interface';
@@ -58,18 +59,18 @@ async function bootstrap() {
 
     const apolloServer = new ApolloServer({
         schema,
+        formatError,
         // formatError: formatArgumentValidationError,
         context: ({ req, res }: any): Context => {
             return {
                 tokenData: req.tokenData
             }
-        }
+        },
     });
 
     const app = Express();
 
-    app.use(
-        '/graphql',
+    app.use('/graphql',
         jwt({
             secret: process.env.JWT_SECRET,
             credentialsRequired: false,
