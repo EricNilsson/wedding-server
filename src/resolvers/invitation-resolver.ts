@@ -17,6 +17,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     ) {}
 
     @Authorized()
+    @UseMiddleware(CheckInvitationId)
     @Query(returns => Invitation)
     public invitation(@Arg('invitationId') invitationId?: string) {
         return this.invitationRepository.findOne(invitationId, {
@@ -24,7 +25,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         });
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Query(returns => [Invitation])
     public invitations(): Promise<Invitation[]> {
         return this.invitationRepository.find({
@@ -32,7 +33,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         });
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Mutation(returns => Invitation)
     public async createInvitation(
         @Ctx() context,
@@ -43,7 +44,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Mutation(returns => Invitation, {
         description: 'Returns the removed invitation. This removes the invitation and ALL the invitees in the invitation. Throws if no invitation matching id is found.'
     })
@@ -64,6 +65,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     }
 
     @Authorized()
+    @UseMiddleware(CheckInvitationId)
     @Mutation(returns => Invitation)
     public async addNote(
         @Arg('invitationId') invitationId: string,
@@ -82,7 +84,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
-    @Authorized() // TODO: ONLY FOR ADMINS
+    @Authorized('ADMIN') // TODO: ONLY FOR ADMINS
     @UseMiddleware(CheckInvitationId)
     @Mutation(returns => [Invitee])
     public async resetAllInvitationStatuses(

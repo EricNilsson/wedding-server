@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert, BaseEntity } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
 import * as Code from './../common/generate-code';
@@ -9,7 +9,7 @@ import { Invitee } from './invitee';
 
 @ObjectType()
 @Entity()
-export class Invitation {
+export class Invitation extends BaseEntity {
 
     @Field(type => String)
     @PrimaryColumn('uuid')

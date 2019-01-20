@@ -1,6 +1,8 @@
-import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
+import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, UseMiddleware, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+
+import { CheckInviteeId } from './../middlewares/checkInviteeId';
 
 import { Invitation } from './../entities/invitation';
 import { Invitee } from './../entities/invitee';
@@ -15,6 +17,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
     ) {}
 
     @Authorized()
+    @UseMiddleware(CheckInviteeId)
     @Query(returns => Invitee)
     public invitee(@Arg('inviteeId') inviteeId: string) {
         return this.inviteeRepository.findOne(inviteeId, {
@@ -22,7 +25,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Query(returns => [Invitee])
     public invitees(): Promise<Invitee[]> {
         return this.inviteeRepository.find({
@@ -30,7 +33,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Mutation(returns => Invitee)
     public async addInvitee(@Arg('invitee') {invitationId, ...invitee}: InviteeInput) {
         const invitation = await this.invitationRepository.findOne(invitationId, {relations: ['invitees']});
@@ -56,7 +59,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         return newInvitee;
     }
 
-    @Authorized()
+    @Authorized('ADMIN')
     @Mutation(returns => Invitee, {
         description: 'This returnes the removed invitee. Throws error if invitee is not found.'
     })
@@ -73,6 +76,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
     }
 
     @Authorized()
+    @UseMiddleware(CheckInviteeId)
     @Mutation(returns => Invitee, { nullable: true })
     public async setInviteStatus(
         @Arg('inviteeId') inviteeId: string,
