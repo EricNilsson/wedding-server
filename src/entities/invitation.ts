@@ -23,6 +23,10 @@ export class Invitation {
     @Column({ nullable: true })
     public note?: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public title?: string;
+
     @Field(type => [Invitee])
     @OneToMany(type => Invitee, invitee => invitee.invitation, { cascade: false })
     public invitees: Invitee[];
