@@ -15,7 +15,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
     ) {}
 
     @Authorized()
-    @Query(returns => Invitation)
+    @Query(returns => Invitee)
     public invitee(@Arg('inviteeId') inviteeId: string) {
         return this.inviteeRepository.findOne(inviteeId, {
             relations: ['invitation']
@@ -73,7 +73,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
     }
 
     @Authorized()
-    @Mutation(returns => Invitee)
+    @Mutation(returns => Invitee, { nullable: true })
     public async setInviteStatus(
         @Arg('inviteeId') inviteeId: string,
         @Arg('inviteStatus', { nullable: true }) inviteStatus?: boolean

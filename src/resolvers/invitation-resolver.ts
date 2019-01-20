@@ -1,6 +1,8 @@
-import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
+import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, UseMiddleware, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+
+import { CheckInvitationId } from './../middlewares/checkInvitationId';
 
 import { Invitation } from './../entities/invitation';
 import { Invitee } from './../entities/invitee';
@@ -32,8 +34,12 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
 
     @Authorized()
     @Mutation(returns => Invitation)
-    public async createInvitation(@Ctx() context) {
+    public async createInvitation(
+        @Ctx() context,
+        @Arg('title') title: string
+    ) {
         const invitation = await this.invitationRepository.create();
+        invitation.title = title;
         return await this.invitationRepository.save(invitation);
     }
 
@@ -74,6 +80,27 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         invitation.note = note;
 
         return await this.invitationRepository.save(invitation);
+    }
+
+    @Authorized() // TODO: ONLY FOR ADMINS
+    @UseMiddleware(CheckInvitationId)
+    @Mutation(returns => [Invitee])
+    public async resetAllInvitationStatuses(
+        @Arg('invitationId') invitationId: string
+    ) {
+        const invitation = await this.invitationRepository.findOne(invitationId, {
+            relations: ['invitees']
+        });
+
+        if (!invitation) {
+            throw new Error(`No invitation matching id: ${invitationId}`);
+        }
+
+        const { invitees } = invitation;
+
+        invitees.forEach((invitee) => invitee.inviteStatus = null);
+
+        return await this.inviteeRepository.save(invitees);
     }
 
     @Authorized()

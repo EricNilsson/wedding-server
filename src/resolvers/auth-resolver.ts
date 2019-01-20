@@ -37,8 +37,7 @@ export class AuthResolver {
     @Authorized()
     @Query(returns => Invitation)
     public async me(@Ctx() { tokenData }: Context) {
-        console.log('me');
-        console.log('tokenData', tokenData.invitationId);
+        console.log('tokenData', tokenData);
         // TODO: Not needed? this is probably handled by express-jwt or type-graphql.@Authorized
         if (!tokenData || (tokenData && !tokenData.invitationId)) {
             throw new Error('Not Authenticated');
