@@ -1,6 +1,7 @@
 import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, UseMiddleware, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Roles } from './../common/access-control';
 
 import { CheckInvitationId } from './../middlewares/checkInvitationId';
 
@@ -25,7 +26,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         });
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Query(returns => [Invitation])
     public invitations(): Promise<Invitation[]> {
         return this.invitationRepository.find({
@@ -33,18 +34,24 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         });
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Mutation(returns => Invitation)
     public async createInvitation(
         @Ctx() context,
-        @Arg('title') title: string
+        @Arg('title') title: string,
+        @Arg('role', { nullable: true }) role?: string
     ) {
         const invitation = await this.invitationRepository.create();
         invitation.title = title;
+
+        if (role === Roles.ADMIN) {
+            invitation.role = role;
+        }
+
         return await this.invitationRepository.save(invitation);
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Mutation(returns => Invitation, {
         description: 'Returns the removed invitation. This removes the invitation and ALL the invitees in the invitation. Throws if no invitation matching id is found.'
     })
@@ -84,7 +91,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
         return await this.invitationRepository.save(invitation);
     }
 
-    @Authorized('ADMIN') // TODO: ONLY FOR ADMINS
+    @Authorized(Roles.ADMIN) // TODO: ONLY FOR ADMINS
     @UseMiddleware(CheckInvitationId)
     @Mutation(returns => [Invitee])
     public async resetAllInvitationStatuses(

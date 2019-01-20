@@ -23,7 +23,10 @@ export class AuthResolver {
 
         if (invitation) {
             return jwt.sign(
-                { invitationId: invitation.id },
+                {
+                    invitationId: invitation.id,
+                    role: invitation.role
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
@@ -38,11 +41,6 @@ export class AuthResolver {
     @Query(returns => Invitation)
     public async me(@Ctx() { tokenData }: Context) {
         console.log('tokenData', tokenData);
-        // TODO: Not needed? this is probably handled by express-jwt or type-graphql.@Authorized
-        if (!tokenData || (tokenData && !tokenData.invitationId)) {
-            throw new Error('Not Authenticated');
-        }
-
 
         const invitation = await this.invitationRepository.findOne(tokenData.invitationId, { relations: ['invitees'] });
 

@@ -6,6 +6,6 @@ export interface Context {
     res?: Response;
     tokenData?: {
         invitationId?: string;
-        roles?: string[];
+        role?: string;
     };
 }

@@ -1,6 +1,7 @@
 import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, UseMiddleware, Arg, Root, Mutation, Ctx, Int } from 'type-graphql';
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Roles } from './../common/access-control';
 
 import { CheckInviteeId } from './../middlewares/checkInviteeId';
 
@@ -25,7 +26,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Query(returns => [Invitee])
     public invitees(): Promise<Invitee[]> {
         return this.inviteeRepository.find({
@@ -33,7 +34,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         });
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Mutation(returns => Invitee)
     public async addInvitee(@Arg('invitee') {invitationId, ...invitee}: InviteeInput) {
         const invitation = await this.invitationRepository.findOne(invitationId, {relations: ['invitees']});
@@ -59,7 +60,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         return newInvitee;
     }
 
-    @Authorized('ADMIN')
+    @Authorized(Roles.ADMIN)
     @Mutation(returns => Invitee, {
         description: 'This returnes the removed invitee. Throws error if invitee is not found.'
     })

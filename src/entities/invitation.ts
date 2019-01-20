@@ -15,8 +15,8 @@ export class Invitation extends BaseEntity {
     @PrimaryColumn('uuid')
     public id: string;
 
-    @Field({ nullable: true })
-    @Column({ nullable: true })
+    @Field()
+    @Column()
     public code: string;
 
     @Field({ nullable: true })
@@ -27,6 +27,10 @@ export class Invitation extends BaseEntity {
     @Column({ nullable: true })
     public title?: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public role?: string;
+
     @Field(type => [Invitee])
     @OneToMany(type => Invitee, invitee => invitee.invitation, { cascade: false })
     public invitees: Invitee[];
@@ -34,7 +38,7 @@ export class Invitation extends BaseEntity {
     @BeforeInsert()
     public init() {
         this.id = v4();
-        this.code = Code.generate(); // TODO: Implement random generator for codes
+        this.code = Code.generate(this.role === 'ADMIN' ? 12 : 4);
     }
 
     // Address?
