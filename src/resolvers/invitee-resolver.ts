@@ -11,7 +11,7 @@ import { Invitee } from './../entities/invitee';
 import { InviteeInput } from './types/invitee-input';
 
 @Resolver(of => Invitation)
-export class InviteeResolver implements ResolverInterface<Invitee> {
+export class InviteeResolver {
     public constructor(
         @InjectRepository(Invitation) private readonly invitationRepository: Repository<Invitation>,
         @InjectRepository(Invitee) private readonly inviteeRepository: Repository<Invitee>
@@ -51,7 +51,7 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
             invitation.invitees = [];
         }
 
-        invitation.invitees.push(newInvitee);
+        (await invitation.invitees).push(newInvitee);
         newInvitee.invitation = invitation;
 
         await this.inviteeRepository.save(newInvitee);
@@ -94,13 +94,13 @@ export class InviteeResolver implements ResolverInterface<Invitee> {
         return await this.inviteeRepository.save(invitee);
     }
 
-    @Authorized()
-    @FieldResolver(returns => Invitation)
-    public invitation(@Root() invitee: Invitee) {
-        return this.invitationRepository.findOne(invitee.invitationId, {
-            cache: 1000,
-            relations: ['invitees']
-        });
-    }
+    // @Authorized()
+    // @FieldResolver(returns => Invitation)
+    // public invitation(@Root() invitee: Invitee) {
+    //     return this.invitationRepository.findOne(invitee.invitationId, {
+    //         cache: 1000,
+    //         relations: ['invitees']
+    //     });
+    // }
 }
 

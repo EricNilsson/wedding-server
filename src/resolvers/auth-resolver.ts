@@ -36,18 +36,4 @@ export class AuthResolver {
 
         return;
     }
-
-    @Authorized()
-    @Query(returns => Invitation)
-    public async me(@Ctx() { tokenData }: Context) {
-        console.log('tokenData', tokenData);
-
-        const invitation = await this.invitationRepository.findOne(tokenData.invitationId, { relations: ['invitees'] });
-
-        if (!invitation) {
-            throw new Error('Invitation not found'); // TODO: return invalidTokenError which should trigger ui to logout
-        }
-
-        return invitation;
-    }
 }

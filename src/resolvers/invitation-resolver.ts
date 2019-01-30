@@ -2,6 +2,7 @@ import { Resolver, ResolverInterface, Query, Authorized, FieldResolver, UseMiddl
 import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Roles } from './../common/access-control';
+import { Context } from './../common/context.interface';
 
 import { CheckInvitationId } from './../middlewares/checkInvitationId';
 
@@ -11,7 +12,7 @@ import { Invitee } from './../entities/invitee';
 import { InviteeInput } from './types/invitee-input';
 
 @Resolver(of => Invitation)
-export class InvitationResolver implements ResolverInterface<Invitation> {
+export class InvitationResolver {
     public constructor(
         @InjectRepository(Invitation) private readonly invitationRepository: Repository<Invitation>,
         @InjectRepository(Invitee) private readonly inviteeRepository: Repository<Invitee>
@@ -20,10 +21,19 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     @Authorized()
     @UseMiddleware(CheckInvitationId)
     @Query(returns => Invitation)
-    public invitation(@Arg('invitationId') invitationId?: string) {
-        return this.invitationRepository.findOne(invitationId, {
+    public async invitation(
+        @Ctx() { tokenData }: Context,
+        @Arg('invitationId', {nullable: true}) invitationId?: string
+    ) {
+        const invitation = await this.invitationRepository.findOne(invitationId || tokenData.invitationId, {
             relations: ['invitees']
         });
+
+        if (!invitation) {
+            throw new Error('')
+        }
+
+        return invitation;
     }
 
     @Authorized(Roles.ADMIN)
@@ -52,7 +62,7 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
     }
 
     @Authorized(Roles.ADMIN)
-    @Mutation(returns => Invitation, {
+    @Mutation(returns => Boolean, {
         description: 'Returns the removed invitation. This removes the invitation and ALL the invitees in the invitation. Throws if no invitation matching id is found.'
     })
     public async removeInvitation(@Arg('invitationId', type => String) invitationId: string) {
@@ -64,11 +74,17 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
             throw new Error(`No invitation found matching id: ${invitationId}`);
         }
 
-        if (invitation.invitees) {
-            await this.inviteeRepository.remove(invitation.invitees); // TODO: Cascade delete instead?
+        if ((await invitation).invitees) {
+            const invitees = await invitation.invitees
+            await this.inviteeRepository.remove(invitees); // TODO: Cascade delete instead?
         }
 
-        return await this.invitationRepository.remove(invitation);
+        try {
+            await this.invitationRepository.remove(invitation);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     @Authorized()
@@ -105,21 +121,21 @@ export class InvitationResolver implements ResolverInterface<Invitation> {
             throw new Error(`No invitation matching id: ${invitationId}`);
         }
 
-        const { invitees } = invitation;
+        const invitees = await invitation.invitees;
 
         invitees.forEach((invitee) => invitee.inviteStatus = null);
 
         return await this.inviteeRepository.save(invitees);
     }
 
-    @Authorized()
-    @FieldResolver()
-    public invitees(@Root() invitation: Invitation) {
-        return this.inviteeRepository.find({
-            cache: 1000,
-            where: { invitationId: invitation.id },
-            relations: ['invitation']
-        });
-    }
+    // @Authorized()
+    // @FieldResolver()
+    // public invitees(@Root() invitation: Invitation) {
+    //     return this.inviteeRepository.find({
+    //         cache: 1000,
+    //         where: { invitationId: invitation.id },
+    //         relations: ['invitation']
+    //     });
+    // }
 }
 

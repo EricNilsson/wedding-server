@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert, BaseEntity } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert, BaseEntity, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
 import * as Code from './../common/generate-code';
@@ -6,6 +6,8 @@ import * as Code from './../common/generate-code';
 import { v4 } from 'uuid';
 
 import { Invitee } from './invitee';
+
+export type Lazy<T extends object> = Promise<T> | T;
 
 @ObjectType()
 @Entity()
@@ -32,15 +34,12 @@ export class Invitation extends BaseEntity {
     public role?: string;
 
     @Field(type => [Invitee])
-    @OneToMany(type => Invitee, invitee => invitee.invitation, { cascade: false })
-    public invitees: Invitee[];
+    @OneToMany(type => Invitee, invitee => invitee.invitation, { lazy: true, cascade: true })
+    public invitees: Lazy<Invitee[]>;
 
     @BeforeInsert()
     public init() {
         this.id = v4();
         this.code = Code.generate(this.role === 'ADMIN' ? 12 : 4);
     }
-
-    // Address?
-
 }

@@ -9,8 +9,9 @@ export const CheckInviteeId: MiddlewareFn<Context> = async ({ args, context: { t
 
     if (args.inviteeId && tokenData.role !== Roles.ADMIN) {
         const invitee = await Invitee.findOne({where: {id: args.inviteeId}});
+        const invitation = await invitee.invitation;
 
-        if (invitee.invitationId !== tokenData.invitationId) {
+        if (invitation.id !== tokenData.invitationId) {
             throw new Error('Cannot manipulate others invitation')
         }
     }

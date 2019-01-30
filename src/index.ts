@@ -4,6 +4,7 @@ import './env.ts';
 import * as TypeORM from 'typeorm';
 import * as TypeGraphQL from 'type-graphql';
 import * as jwt from 'express-jwt';
+import * as path from 'path';
 
 import queryComplexity from 'graphql-query-complexity';
 import { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
@@ -56,8 +57,10 @@ async function bootstrap() {
                 InviteeResolver,
                 AuthResolver
             ],
+            // emitSchemaFile: path.resolve(__dirname, "schema.gql"),
             authChecker
         });
+        console.log('schema', schema);
     } catch (error) { console.log('error', error) }
 
     // const apolloServer = new ApolloServer({

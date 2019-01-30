@@ -5,6 +5,8 @@ import { v4 } from 'uuid';
 
 import { Invitation } from './invitation';
 
+export type Lazy<T extends object> = Promise<T> | T;
+
 @ObjectType()
 @Entity()
 export class Invitee extends BaseEntity {
@@ -26,10 +28,8 @@ export class Invitee extends BaseEntity {
     public inviteStatus: boolean;
 
     @Field(type => Invitation)
-    @ManyToOne(type => Invitation, invitation => invitation.invitees, {cascade: true})
-    public invitation: Invitation;
-    @Column()
-    public invitationId: string;
+    @ManyToOne(type => Invitation, { lazy: true })
+    public invitation: Lazy<Invitation>;
 
     @BeforeInsert()
     public init() {
