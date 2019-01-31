@@ -61,9 +61,7 @@ export class InviteeResolver {
     }
 
     @Authorized(Roles.ADMIN)
-    @Mutation(returns => Invitee, {
-        description: 'This returnes the removed invitee. Throws error if invitee is not found.'
-    })
+    @Mutation(returns => Boolean)
     public async removeInvitee(
         @Arg('inviteeId', type => String) inviteeId: string
     ) {
@@ -73,7 +71,12 @@ export class InviteeResolver {
             throw new Error(`No invitation found matching ID: ${inviteeId}`);
         }
 
-        return await this.inviteeRepository.remove(invitee);
+        try {
+            await this.inviteeRepository.remove(invitee);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     @Authorized()
