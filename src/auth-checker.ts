@@ -15,6 +15,9 @@ export const authChecker: AuthChecker<Context> = async ({ root, args, context: {
         if (tokenData && tokenData.invitationId && tokenData.role) {
             const invitation = await Invitation.findOne(tokenData.invitationId)
             console.log('ADMIN invitation', invitation);
+            if (!invitation) {
+                throw new Error('Autherntication error: Cannot find invitation');
+            }
             return invitation.role === tokenData.role;
         } else {
             return false;
