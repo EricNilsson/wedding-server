@@ -33,7 +33,9 @@ export class InvitationResolver {
             throw new Error('')
         }
 
-        return invitation;
+        invitation.lastActive = Date.now().toString();
+
+        return await invitation.save();
     }
 
     @Authorized(Roles.ADMIN)

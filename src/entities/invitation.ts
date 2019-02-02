@@ -33,6 +33,10 @@ export class Invitation extends BaseEntity {
     @Column({ nullable: true })
     public role?: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    public lastActive: string; // String to bypass: GraphQL error: value "1549112196334" is out of range for type integer
+
     @Field(type => [Invitee])
     @OneToMany(type => Invitee, invitee => invitee.invitation, { lazy: true, cascade: true })
     public invitees: Lazy<Invitee[]>;
