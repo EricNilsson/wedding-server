@@ -4,6 +4,8 @@ import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Roles } from './../common/access-control';
 import { Context } from './../common/context.interface';
 
+import discord from './../middlewares/discord';
+
 import { CheckInvitationId } from './../middlewares/checkInvitationId';
 
 import { Invitation } from './../entities/invitation';
@@ -30,8 +32,10 @@ export class InvitationResolver {
         });
 
         if (!invitation) {
-            throw new Error('')
+            throw new Error('Inbjudan saknas')
         }
+
+        discord.info(invitation.title, 'Besöker sidan');
 
         invitation.lastActive = Date.now().toString();
 
@@ -103,6 +107,8 @@ export class InvitationResolver {
         if (!invitation) {
             throw new Error(`No invitation matching id: ${invitationId}`);
         }
+
+        discord.info(invitation.title, `Har lagt till meddelande:\n${note}`);
 
         invitation.note = note;
 

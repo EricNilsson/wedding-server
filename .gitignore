@@ -6,3 +6,4 @@ build/
 tmp/
 temp/
 *.sublime-workspace
+yarn-error.log

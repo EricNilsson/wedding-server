@@ -2317,6 +2317,11 @@ signal-exit@^3.0.0:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
+snekfetch@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/snekfetch/-/snekfetch-3.6.4.tgz#d13e80a616d892f3d38daae4289f4d258a645120"
+  integrity sha512-NjxjITIj04Ffqid5lqr7XdgwM7X61c/Dns073Ly170bPQHLm6jkmelye/eglS++1nfTWktpP6Y2bFXjdPlQqdw==
+
 source-map-support@^0.4.0:
   version "0.4.18"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.18.tgz#0286a6de8be42641338594e97ccea75f0a2c585f"
@@ -2697,6 +2702,13 @@ vary@^1, vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
+
+webhook-discord@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/webhook-discord/-/webhook-discord-3.1.0.tgz#786eca163a51d1c8ea3b2039dc192b8aa934c21d"
+  integrity sha512-0kOKL5Vup4mgsPylOBUNM0UpCGKeMMf2bc+hQo4A1q1lIqBvivldMYEM+OnoaTgDVa4Yz6as7cD9F6bf5SLcWA==
+  dependencies:
+    snekfetch "^3.6.4"
 
 which-module@^2.0.0:
   version "2.0.0"

@@ -3,15 +3,15 @@ import './env.ts';
 
 import * as TypeORM from 'typeorm';
 import * as TypeGraphQL from 'type-graphql';
-import * as jwt from 'express-jwt';
-import * as path from 'path';
+import jwt from 'express-jwt';
+import path from 'path';
 
 import queryComplexity from 'graphql-query-complexity';
 import { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
 
 import { ApolloServer, GraphQLOptions } from 'apollo-server-express';
 import { formatError } from 'apollo-errors';
-import * as Express from 'express';
+import Express from 'express';
 import { Container } from 'typedi';
 import { Context } from './common/context.interface';
 import { authChecker } from './auth-checker';
@@ -43,8 +43,9 @@ async function bootstrap() {
                 Invitation
             ],
             synchronize: true,
-            logger: 'advanced-console',
-            logging: true,
+            logging: ['error', 'warn'],
+            // logger: 'advanced-console',
+            // logging: true,
             dropSchema: false,
             cache: true,
         });
@@ -60,7 +61,6 @@ async function bootstrap() {
             // emitSchemaFile: path.resolve(__dirname, "schema.gql"),
             authChecker
         });
-        console.log('schema', schema);
     } catch (error) { console.log('error', error) }
 
     // const apolloServer = new ApolloServer({

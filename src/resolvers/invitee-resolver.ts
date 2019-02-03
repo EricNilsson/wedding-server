@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Roles } from './../common/access-control';
 
+import discord from './../middlewares/discord';
 import { CheckInviteeId } from './../middlewares/checkInviteeId';
 
 import { Invitation } from './../entities/invitation';
@@ -91,6 +92,8 @@ export class InviteeResolver {
         if (!invitee) {
             throw new Error(`No invitee found with ID: ${ inviteeId }`)
         }
+
+        discord.info(`${invitee.firstName} ${invitee.lastName}`, inviteStatus ? 'Kommer!' : 'Kommer inte');
 
         invitee.inviteStatus = inviteStatus;
 

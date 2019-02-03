@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany, BeforeInsert, BaseEntity, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
-import * as Code from './../common/generate-code';
+import generate from './../common/generate-code';
 
 import { v4 } from 'uuid';
 
@@ -44,6 +44,6 @@ export class Invitation extends BaseEntity {
     @BeforeInsert()
     public init() {
         this.id = v4();
-        this.code = Code.generate(this.role === 'ADMIN' ? 12 : 4);
+        this.code = generate(this.role === 'ADMIN' ? 12 : 4);
     }
 }

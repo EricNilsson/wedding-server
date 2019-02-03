@@ -1,10 +1,11 @@
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 import { Resolver, Mutation, Query, Authorized, Arg, Ctx } from 'type-graphql';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Repository } from 'typeorm';
 
 import { CodeNotFoundError } from './errors/CodeNotFoundError';
+import discord from './../middlewares/discord';
 
 import { Context } from './../common/context.interface';
 import { Invitation } from './../entities/invitation';
@@ -22,6 +23,7 @@ export class AuthResolver {
         });
 
         if (invitation) {
+            discord.success(invitation.title, 'Har loggat in');
             return jwt.sign(
                 {
                     invitationId: invitation.id,
@@ -31,6 +33,7 @@ export class AuthResolver {
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
         } else {
+            discord.err('Error', `Koden: ${ invitationCode }, finns inte.`);
             throw new CodeNotFoundError();
         }
 
