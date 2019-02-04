@@ -28,6 +28,8 @@ export const authChecker: AuthChecker<Context> = async ({ root, args, context: {
             }
 
             return invitation.role === tokenData.role; // Check if the role in the tokenb matches that in the invitation.
+        } else {
+            discord.info('Access Denied (admin)', `Admin fieldname: ${info.fieldName}`);
         }
     }
 
