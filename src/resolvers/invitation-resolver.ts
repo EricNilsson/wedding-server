@@ -32,7 +32,7 @@ export class InvitationResolver {
         });
 
         if (!invitation) {
-            throw new Error('Inbjudan saknas')
+            throw new Error('Inbjudan saknas');
         }
 
         discord.info(invitation.title, 'Besöker sidan');

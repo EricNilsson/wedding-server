@@ -58,7 +58,6 @@ async function bootstrap() {
                 InviteeResolver,
                 AuthResolver
             ],
-            // emitSchemaFile: path.resolve(__dirname, "schema.gql"),
             authChecker
         });
     } catch (error) { console.log('error', error) }
@@ -67,11 +66,7 @@ async function bootstrap() {
     const apolloServer = new ComplexServer({ // Hackily hack-hack
         schema,
         formatError,
-        context: ({ req, res }: any): Context => {
-            return {
-                tokenData: req.tokenData
-            }
-        }
+        context: ({ req: {tokenData} }: any): Context => ({ tokenData })
     });
 
     const app = Express();
@@ -118,7 +113,6 @@ class ComplexServer extends ApolloServer {
                         // Will be invoked weather the query is rejected or not
                         // This can be used for logging or to implement rate limiting
                         onComplete: (complexity: number) => {
-                        console.log("Query Complexity:", complexity);
                     },
                     estimators: [
                         // Using fieldConfigEstimator is mandatory to make it work with type-graphql

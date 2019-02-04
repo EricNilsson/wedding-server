@@ -1,8 +1,4 @@
 
 TODO:
 
-- Add last update field to invitations and invitees
-- ACL for mutations and queries
-    - Should only be able to see the invitees that is on the invitation that was used to log in
-- Move database stuff to env-vars
 - Add address to invitations?
