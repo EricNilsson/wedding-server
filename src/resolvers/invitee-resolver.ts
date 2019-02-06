@@ -93,7 +93,7 @@ export class InviteeResolver {
             throw new Error(`No invitee found with ID: ${ inviteeId }`)
         }
 
-        discord.info(`${invitee.firstName} ${invitee.lastName}`, inviteStatus ? 'Kommer!' : 'Kommer inte');
+        discord.info(`${invitee.firstName} ${invitee.lastName}`.slice(0, 31), inviteStatus ? 'Kommer!' : 'Kommer inte');
 
         invitee.inviteStatus = inviteStatus;
 

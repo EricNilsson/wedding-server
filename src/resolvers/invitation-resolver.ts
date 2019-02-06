@@ -35,7 +35,7 @@ export class InvitationResolver {
             throw new Error('Inbjudan saknas');
         }
 
-        discord.info(invitation.title, 'Besöker sidan');
+        discord.info(invitation.title.slice(0, 31), 'Besöker sidan');
 
         invitation.lastActive = Date.now().toString();
 
@@ -108,7 +108,7 @@ export class InvitationResolver {
             throw new Error(`No invitation matching id: ${invitationId}`);
         }
 
-        discord.info(invitation.title, `Har lagt till meddelande:\n${note}`);
+        discord.info(invitation.title.slice(0, 31), `Har lagt till meddelande:\n${note}`);
 
         invitation.note = note;
 

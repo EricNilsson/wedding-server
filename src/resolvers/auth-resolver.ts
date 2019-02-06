@@ -23,7 +23,7 @@ export class AuthResolver {
         });
 
         if (invitation) {
-            discord.success(invitation.title, 'Har loggat in');
+            discord.success(invitation.title.slice(0, 31), 'Har loggat in');
             return jwt.sign(
                 {
                     invitationId: invitation.id,
