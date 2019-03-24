@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import './env.ts';
 
 import * as TypeORM from 'typeorm';
 import * as TypeGraphQL from 'type-graphql';
@@ -49,7 +48,7 @@ async function bootstrap() {
             dropSchema: false,
             cache: true,
         });
-    } catch(error) { console.log('error', error) }
+    } catch(e) { console.log('Typeorm DB connection error:', e) }
 
     try {
         schema = await TypeGraphQL.buildSchema({
@@ -60,7 +59,7 @@ async function bootstrap() {
             ],
             authChecker
         });
-    } catch (error) { console.log('error', error) }
+    } catch (e) { console.log('Build schema error:', e) }
 
     // const apolloServer = new ApolloServer({
     const apolloServer = new ComplexServer({ // Hackily hack-hack
@@ -70,14 +69,15 @@ async function bootstrap() {
     });
 
     const app = Express();
-
-    app.use('/graphql',
-        jwt({
-            secret: process.env.JWT_SECRET,
-            credentialsRequired: false,
-            userProperty: 'tokenData',
-        })
-    );
+    try {
+        app.use('/graphql',
+            jwt({
+                secret: process.env.JWT_SECRET,
+                credentialsRequired: false,
+                userProperty: 'tokenData',
+            })
+        );
+    } catch(e) { console.log('JWT-error:', e) }
 
     apolloServer.applyMiddleware({ app });
 
@@ -88,10 +88,11 @@ async function bootstrap() {
 
 try {
     bootstrap();
-} catch (error) { console.log('error', error) }
+} catch (e) { console.log('Startup error:', e) }
 
 
 // XXX: Evil hack to use graphql-cost-analysis
+// https://github.com/pa-bru/graphql-cost-analysis/issues/12#issuecomment-420991259
 class ComplexServer extends ApolloServer {
     async createGraphQLServerOptions(
         req: Express.Request,
