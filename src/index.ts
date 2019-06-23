@@ -5,7 +5,8 @@ import * as TypeGraphQL from 'type-graphql';
 import jwt from 'express-jwt';
 import path from 'path';
 
-import { thumb } from 'node-thumbnail';
+import { thumb } from './common/thumbnail';
+// import { thumb } from 'node-thumbnail';
 
 import queryComplexity from 'graphql-query-complexity';
 import { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
@@ -113,9 +114,10 @@ try {
         destination: path.resolve(__dirname, '../static/images/.thumbs'),
         ignore: true,
         skip: true,
-        concurrency: 1,
+        // concurrency: 4,
+        height: 500,
         suffix: ''
-    }).finally(() => bootstrap())
+    }).then(() => bootstrap())
       .catch((error) => console.log('error', error));
 } catch (e) {
     console.log('Startup error:', e);
