@@ -23,6 +23,7 @@ import { Invitation } from './entities/invitation';
 import { InviteeResolver } from './resolvers/invitee-resolver';
 import { InvitationResolver } from './resolvers/invitation-resolver';
 import { AuthResolver } from './resolvers/auth-resolver';
+import { ImageResolver } from './resolvers/image-resolver';
 
 TypeGraphQL.useContainer(Container);
 TypeORM.useContainer(Container);
@@ -61,7 +62,8 @@ async function bootstrap() {
             resolvers: [
                 InvitationResolver,
                 InviteeResolver,
-                AuthResolver
+                AuthResolver,
+                ImageResolver
             ],
             authChecker
         });
