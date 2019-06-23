@@ -16,16 +16,18 @@ export class ImageResolver {
     public async images() {
         return await fs.promises.readdir(path.resolve(__dirname, '../../static/images'))
                                 .then((files) => {
+                                    const images: Image[] = [];
                                     files = files.filter((path) => path !== '.DS_Store' && path !== '.thumbs');
-
-                                    return files.map((file) => {
-                                        const { height, width } = imageSize(file);
-                                        return {
-                                            height,
-                                            width,
-                                            file
-                                        }
+                                    files.forEach((filename) => {
+                                        const { height, width } = imageSize(path.resolve(__dirname, '../../static/images/.thumbs', filename));
+                                        images.push({
+                                            thumbHeight: height,
+                                            thumbWidth: width,
+                                            filename
+                                        });
                                     });
+
+                                    return images;
                                 });
     }
 }

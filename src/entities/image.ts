@@ -7,8 +7,8 @@ export class Image {
     public filename: string;
 
     @Field()
-    public width: number;
+    public thumbWidth: number;
 
     @Field()
-    public height: number;
+    public thumbHeight: number;
 }
