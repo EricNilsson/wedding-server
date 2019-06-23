@@ -5,6 +5,8 @@ import * as TypeGraphQL from 'type-graphql';
 import jwt from 'express-jwt';
 import path from 'path';
 
+import { thumb } from 'node-thumbnail';
+
 import queryComplexity from 'graphql-query-complexity';
 import { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity';
 
@@ -25,8 +27,12 @@ import { AuthResolver } from './resolvers/auth-resolver';
 TypeGraphQL.useContainer(Container);
 TypeORM.useContainer(Container);
 
+console.log('Starting');
+
 async function bootstrap() {
     let schema;
+
+    console.log('bootstrap');
 
     try {
         // Move config to file?
@@ -70,7 +76,7 @@ async function bootstrap() {
 
     const app = Express();
     try {
-        app.use('/graphql',
+        app.use('/',
             jwt({
                 secret: process.env.JWT_SECRET,
                 credentialsRequired: false,
@@ -78,6 +84,18 @@ async function bootstrap() {
             })
         );
     } catch(e) { console.log('JWT-error:', e) }
+
+    const validateToken: Express.RequestHandler = (req: any, resp, next) => {
+        const { tokenData } = req;
+
+        if (tokenData) {
+            next();
+        } else {
+            resp.sendStatus(403);
+        }
+    };
+    app.use('/static/images', validateToken, Express.static(path.resolve(__dirname, '../static/images')));
+    app.use('/static/images/thumbs', validateToken, Express.static(path.resolve(__dirname, '../static/images/.thumbs')));
 
     apolloServer.applyMiddleware({ app });
 
@@ -87,8 +105,19 @@ async function bootstrap() {
 }
 
 try {
-    bootstrap();
-} catch (e) { console.log('Startup error:', e) }
+    thumb({
+        // TODO: set paths in envs, which defautlts to docker-specific
+        source: path.resolve(__dirname, '../static/images'),
+        destination: path.resolve(__dirname, '../static/images/.thumbs'),
+        ignore: true,
+        skip: true,
+        concurrency: 1,
+        suffix: ''
+    }).finally(() => bootstrap())
+      .catch((error) => console.log('error', error));
+} catch (e) {
+    console.log('Startup error:', e);
+}
 
 
 // XXX: Evil hack to use graphql-cost-analysis

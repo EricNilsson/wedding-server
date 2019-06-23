@@ -1,5 +1,5 @@
 .env*
-
+static
 .idea/
 .vscode/
 node_modules/

@@ -4,8 +4,10 @@ services:
     wedding-server:
         container_name: wedding-server
         build: ./
+        restart: unless-stopped
         ports:
           - 4000:4000
-        restart: unless-stopped
+        volumes:
+            - ./static:/usr/src/app/static
         env_file:
           - ./.env-docker
