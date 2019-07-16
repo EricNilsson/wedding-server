@@ -96,17 +96,14 @@ async function bootstrap() {
         );
     } catch(e) { console.log('JWT-error:', e) }
 
-    const validateToken: Express.RequestHandler = (req: any, resp, next) => {
-        const { tokenData } = req;
+    const validateToken: Express.RequestHandler = (req: any, resp, next) => req.tokenData ? next() : resp.sendStatus(403);
 
-        if (tokenData) {
-            next();
-        } else {
-            resp.sendStatus(403);
-        }
-    };
     app.use('/static/images', validateToken, Express.static(path.resolve(__dirname, '../static/images')));
     app.use('/static/images/thumbs', validateToken, Express.static(path.resolve(__dirname, '../static/images/.thumbs')));
+    app.use('/static/videos', validateToken, Express.static(path.resolve(__dirname, '../static/videos')));
+    app.use('/static/other', validateToken, Express.static(path.resolve(__dirname, '../static/other'), {
+        setHeaders: (res) => res.contentType('application/zip')
+    }));
 
     apolloServer.applyMiddleware({ app });
 
@@ -123,7 +120,7 @@ try {
         ignore: true,
         skip: true,
         // concurrency: 4,
-        height: 500,
+        height: 400,
         suffix: ''
     }).then(() => bootstrap())
       .catch((error) => console.log('error', error));
