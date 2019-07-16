@@ -4,6 +4,7 @@
    "description": "Wedding server",
    "devDependencies": {
       "@types/async": "^3.0.0",
+      "@types/compression": "^0.0.36",
       "@types/dotenv": "6.1.0",
       "@types/express-jwt": "0.0.40",
       "@types/image-size": "^0.7.0",
@@ -20,6 +21,7 @@
       "apollo-errors": "1.9.0",
       "apollo-server-express": "2.3.3",
       "async": "^3.1.0",
+      "compression": "^1.7.4",
       "dotenv": "6.2.0",
       "express": "4.16.4",
       "express-jwt": "5.3.1",

@@ -14,6 +14,7 @@ import { fieldConfigEstimator, simpleEstimator } from 'graphql-query-complexity'
 import { ApolloServer, GraphQLOptions } from 'apollo-server-express';
 import { formatError } from 'apollo-errors';
 import Express from 'express';
+import compression from 'compression';
 import { Container } from 'typedi';
 import { Context } from './common/context.interface';
 import { authChecker } from './auth-checker';
@@ -98,9 +99,9 @@ async function bootstrap() {
 
     const validateToken: Express.RequestHandler = (req: any, resp, next) => req.tokenData ? next() : resp.sendStatus(403);
 
-    app.use('/static/images', validateToken, Express.static(path.resolve(__dirname, '../static/images')));
-    app.use('/static/images/thumbs', validateToken, Express.static(path.resolve(__dirname, '../static/images/.thumbs')));
-    app.use('/static/videos', validateToken, Express.static(path.resolve(__dirname, '../static/videos')));
+    app.use('/static/images', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/images')));
+    app.use('/static/images/thumbs', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/images/.thumbs')));
+    app.use('/static/videos', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/videos')));
     app.use('/static/other', validateToken, Express.static(path.resolve(__dirname, '../static/other'), {
         setHeaders: (res) => res.contentType('application/zip')
     }));
