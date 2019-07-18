@@ -102,6 +102,7 @@ async function bootstrap() {
     app.use('/static/images', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/images')));
     app.use('/static/images/thumbs', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/images/.thumbs')));
     app.use('/static/videos', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/videos')));
+    app.use('/static/video-thumbs', validateToken, compression(), Express.static(path.resolve(__dirname, '../static/video-thumbs')));
     app.use('/static/other', validateToken, Express.static(path.resolve(__dirname, '../static/other'), {
         setHeaders: (res) => res.contentType('application/zip')
     }));
